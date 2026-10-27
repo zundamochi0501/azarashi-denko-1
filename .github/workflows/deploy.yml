@@ -27,13 +27,10 @@ jobs:
       
       - name: Prepare website
         run: |
-          mkdir -p dist
-          unzip -q azarashi-denko-class1-2026.zip -d dist
-          if [ ! -f dist/index.html ]; then
-            echo "ZIP内にindex.htmlが見つかりません"
-            find dist -name index.html
-            exit 1
-          fi
+  mkdir -p dist
+  curl -fL --retry 3 -o app.zip https://github.com/zundamochi0501/azarashi-denko-1/releases/download/v1.1/denko1_fix_20261027.zip
+  unzip -q app.zip -d dist
+  test -f dist/index.html
   
 
       - name: Configure Pages
