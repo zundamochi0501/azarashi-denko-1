@@ -24,14 +24,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      
       - name: Prepare website
         run: |
-  mkdir -p dist
-  curl -fL --retry 3 -o app.zip https://github.com/zundamochi0501/azarashi-denko-1/releases/download/v1.1/denko1_fix_20261027.zip
-  unzip -q app.zip -d dist
-  test -f dist/index.html
-  
+          mkdir -p dist
+          curl -fL --retry 3 -o app.zip https://github.com/zundamochi0501/azarashi-denko-1/releases/download/v1.1/denko1_fix_20261027.zip
+          unzip -q app.zip -d dist
+          test -f dist/index.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
