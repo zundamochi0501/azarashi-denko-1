@@ -1,0 +1,51 @@
+name: Deploy Azarashi 1
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract app
+        run: |
+          python3 - <<'PY'
+          import glob, urllib.parse, zipfile, os
+          files = glob.glob("*.zip")
+          files += [f for f in glob.glob("*") if urllib.parse.unquote(f).lower().endswith(".zip") and f not in files]
+          if len(files) != 1:
+              raise RuntimeError(f"Expected one ZIP file, found: {files}")
+          with zipfile.ZipFile(files[0]) as z:
+              z.extractall("dist")
+          if not os.path.isfile("dist/index.html"):
+              raise RuntimeError("dist/index.html not found")
+          PY
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
